@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.exa.android.khacheri.Authentication.ViewModel.AuthVM
+import com.exa.android.khacheri.mvvm.Authentication.ViewModel.AuthVM
 import com.exa.android.khacheri.utils.AuthRoute
 import com.exa.android.khacheri.utils.Response
 import com.exa.android.khacheri.utils.showToast

@@ -69,8 +69,7 @@ fun CustomBottomNavigationBar(
 ) {
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination
     var selected = currentDestination?.route
-
-    //Log.d("currentBackStackEntry->BottomNav", "selected - $selected, back - ${currentDestination?.route.toString()}")
+    Log.d("currentBackStackEntry->BottomNav", "selected - $selected, back - ${currentDestination?.route.toString()}")
     // Define navigation items
     val items = listOf(BottomNavItem(route = HomeRoute.ChatList.route,
         icon = Icons.Default.Home,
@@ -86,12 +85,13 @@ fun CustomBottomNavigationBar(
         icon = Icons.Default.Person,
         label = "Profile",
         onClick = {
-            if (selected != MainRoute.Profile.route) {
+          //  if (selected != MainRoute.Profile.route) {
+            Log.d("profile", "2")
                 navController.navigate(MainRoute.Profile.route) {
                     launchSingleTop = true
                     restoreState = true
                 }
-            }
+           // }
         }))
 
     // Render the custom navigation bar
@@ -141,6 +141,7 @@ fun CustomBottomNavigationBar(
 
         Column(horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.clickable {
+                Log.d("profile", "1")
                 items[1].onClick()
                  //selected.value = items[1].route
                 }) {

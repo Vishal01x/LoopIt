@@ -1,7 +1,10 @@
 package com.exa.android.khacheri.screens.Main.Home
 
+import android.util.Log
+import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -21,41 +25,60 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.exa.android.khacheri.R
+import com.exa.android.khacheri.mvvm.main.ViewModel.ChatViewModel
 import com.exa.android.khacheri.utils.HomeRoute
 import com.exa.android.khacheri.utils.MainRoute
+import com.exa.android.khacheri.utils.Response
+import com.exa.android.khacheri.utils.bottomSheet
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController, viewModel: ChatViewModel) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(top=2.dp)
+            .padding(top = 2.dp)
     ) {
-        HeaderSection()
+        HeaderSection(navController)
         Spacer(modifier = Modifier.height(12.dp))
         StoriesSection()
         Spacer(modifier = Modifier.height(16.dp))
-        ChatsSection(navController)
+        ChatsSection(navController, viewModel)
     }
 }
 
 @Composable
-fun HeaderSection() {
+fun HeaderSection(navController: NavController) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -69,7 +92,10 @@ fun HeaderSection() {
             imageVector = Icons.Default.Search,
             contentDescription = "Search",
             tint = Color.Black,
-            modifier = Modifier.padding(8.dp).size(24.dp)
+            modifier = Modifier
+                .clickable { navController.navigate(HomeRoute.SearchScreen.route) }
+                .padding(8.dp)
+                .size(24.dp)
         )
     }
 }
@@ -125,32 +151,88 @@ fun AddStoryItem() {
 }
 
 @Composable
-fun ChatsSection(navController: NavController) {
-    // Chat List
+fun ChatsSection(navController: NavController, viewModel: ChatViewModel) {
+    val chatList by viewModel.chatList.collectAsState()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 12.dp), // Avoid spacing issues
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-
+        // Add a title to the chat list
         item {
             ChatTitle()
         }
 
-        items(chatList) { chat ->
-            ChatListItem(
-                chat = chat,
-                zoomImage = { imageId ->
-                    navController.navigate("zoomImage/$imageId")
-                },
-                openChat = {
-                    navController.navigate(HomeRoute.ChatDetail.route)
+        // Handle the state of the chat list
+        when (val response = chatList) {
+            is Response.Loading -> {
+                // Show a loading indicator
+                item {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                    )
                 }
-            )
+            }
+
+            is Response.Success -> {
+                // Display the chat list
+                if (response.data.isEmpty()) {
+                    item {
+                        Column(
+                            modifier =  Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(text = "No chats Yet", style = MaterialTheme.typography.labelMedium)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Button(onClick = { navController.navigate(HomeRoute.SearchScreen.route)}) {
+                                Text(text = "New Chat")
+                            }
+                        }
+                    }
+                }
+                items(response.data) { chat ->
+                    ChatListItem(
+                        chat = chat,
+                        zoomImage = { imageId ->
+                            navController.navigate("zoomImage/$imageId")
+                        },
+                        openChat = { userId ->
+                            navController.navigate(HomeRoute.ChatDetail.createRoute(userId))
+                        }
+                    )
+                }
+            }
+
+            is Response.Error -> {
+                // Show a friendly error message and optional retry button
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Failed to load chats. Please try again.",
+                            color = Color.Red,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(onClick = { viewModel.getChatList() }) {
+                            Text("Retry")
+                        }
+                    }
+                }
+            }
         }
     }
 }
+
 
 @Composable
 fun ChatTitle(modifier: Modifier = Modifier) {
@@ -175,6 +257,53 @@ fun ChatTitle(modifier: Modifier = Modifier) {
         )
     }
 }
+
+@Composable
+fun ShowbottomSheet(modifier: Modifier = Modifier) {
+    var showDialog by remember { mutableStateOf(bottomSheet) }
+    var textState by remember { mutableStateOf("") }
+
+    // Show the dialog box if showDialog is true
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { bottomSheet = false },  // Dismiss the dialog on outside click
+            title = { Text("Enter Text") },
+            text = {
+                Column {
+                    Text("Please enter something below:")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TextField(
+                        value = textState,
+                        onValueChange = { textState = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Input") }
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        // Handle the OK button action
+                        bottomSheet = false
+                    }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        // Handle the Cancel button action
+                        bottomSheet = false
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+}
+
 
 // Sample data classes
 data class Story(val image: Int, val name: String)

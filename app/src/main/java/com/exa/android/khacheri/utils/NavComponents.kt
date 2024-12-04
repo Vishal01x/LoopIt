@@ -8,14 +8,17 @@ sealed class AuthRoute(val route : String){
 
 sealed class MainRoute(val route : String){
     object Home : MainRoute("home")
-    object Profile : MainRoute("profile")
+    object Profile : MainRoute("status")
     object Setting : MainRoute("setting")
 }
 
 
 sealed class HomeRoute(val route : String){
     object ChatList : HomeRoute("chats_list")
-    object ChatDetail : HomeRoute("chat_detail")
+    object ChatDetail : HomeRoute("chat_detail/{userId}"){
+        fun createRoute(userId : String) : String = "chat_detail/${userId}"
+    }
+    object SearchScreen : HomeRoute("search")
     object ZoomImage : HomeRoute("zoomImage/{imageId}") {
         fun createRoute(imageId: Int): String = "zoomImage/$imageId"
     }
@@ -40,4 +43,6 @@ sealed class NavigationCommand{
     object ToAuth : NavigationCommand()
 }
 
+
+var bottomSheet : Boolean = false
 

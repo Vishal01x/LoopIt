@@ -1,23 +1,31 @@
 package com.exa.android.khacheri.screens.navigation
 
+import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.exa.android.khacheri.mvvm.main.ViewModel.ChatViewModel
 import com.exa.android.khacheri.screens.Main.SettingScreen
 import com.exa.android.khacheri.screens.Main.StatusScreen
 import com.exa.android.khacheri.utils.HomeRoute
 import com.exa.android.khacheri.utils.MainRoute
+import com.exa.android.khacheri.utils.models.Chat
 
 fun NavGraphBuilder.mainAppNavGraph(navController: NavHostController) {
+
     navigation(startDestination = "home", route = "main_app") {
         homeNavGraph(navController)
 
-        composable(MainRoute.Profile.route) {
+        composable(MainRoute.Setting.route) {
             StatusScreen(navController)
         }
-        composable(MainRoute.Setting.route) {
-            SettingScreen(navController)
+        composable(MainRoute.Profile.route) {
+            val viewModel : ChatViewModel = hiltViewModel()
+            Log.d("settingsScreen", "send")
+            SettingScreen(viewModel)
         }
     }
 }

@@ -29,25 +29,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.exa.android.khacheri.R
+import com.exa.android.khacheri.utils.formatTimestamp
+import com.exa.android.khacheri.utils.models.ChatList
 
 
 @Composable
-fun ChatListItem(chat: Chat, zoomImage: (Int) -> Unit, openChat: () -> Unit) {
+fun ChatListItem(chat: ChatList, zoomImage: (Int) -> Unit, openChat: (userId :String) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { openChat(chat.userId) }
             .padding(horizontal = 4.dp, vertical = 8.dp)
-            .clickable { openChat() }
     ) {
         Image(
-            painter = painterResource(chat.image),
+            painter = painterResource(R.drawable.chat_img3),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
-                .clickable { zoomImage(chat.image) }
+                .clickable { zoomImage(R.drawable.chat_img3) }
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column(
@@ -69,8 +71,9 @@ fun ChatListItem(chat: Chat, zoomImage: (Int) -> Unit, openChat: () -> Unit) {
             )
         }
         Column(horizontalAlignment = Alignment.End) {
-            Text(chat.time, style = MaterialTheme.typography.labelSmall, color = Color.Gray, fontSize = 13.sp)
-            if (chat.unreadCount > 0) {
+            val timestampInMillis = chat.lastMessageTimestamp.seconds*1000L
+            Text(formatTimestamp(timestampInMillis), style = MaterialTheme.typography.labelSmall, color = Color.Gray, fontSize = 13.sp)
+            if (chat.unreadMessages>0) {
                 Spacer(modifier = Modifier.height(4.dp))
                 Box(
                     contentAlignment = Alignment.Center,
@@ -80,7 +83,7 @@ fun ChatListItem(chat: Chat, zoomImage: (Int) -> Unit, openChat: () -> Unit) {
                         .background(Color.Yellow)
                 ) {
                     Text(
-                        "${chat.unreadCount}",
+                        "${chat.unreadMessages}",
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.Black,
                         fontSize = 12.sp
@@ -139,6 +142,7 @@ fun ZoomPhoto(modifier: Modifier = Modifier, imageId: Int, onBack: () -> Unit) {
         )
     }
 }
+
 
 /*
 @Composable

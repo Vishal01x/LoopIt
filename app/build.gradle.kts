@@ -66,6 +66,10 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.generativeai)
+    implementation(libs.firebase.firestore)
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.benchmark.macro)
+    implementation(libs.firebase.database)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -75,6 +79,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.androidx.navigation.compose)
+    // for window insets
+    implementation("androidx.compose.foundation:foundation:1.5.0")
 
     // Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.11.0")
@@ -102,8 +108,14 @@ dependencies {
     // hilt Navigation
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
+    // material components
     implementation("androidx.compose.material:material:1.7.5")
 
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
 
+    //coil
+    implementation ("io.coil-kt:coil-compose:2.4.0")
+
+    // Signal Protocol for E2EE
+    implementation("org.whispersystems:signal-protocol-android:2.8.1")
 }

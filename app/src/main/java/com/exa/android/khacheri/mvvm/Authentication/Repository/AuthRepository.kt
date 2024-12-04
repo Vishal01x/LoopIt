@@ -1,4 +1,4 @@
-package com.exa.android.khacheri.Authentication.Repository
+package com.exa.android.khacheri.mvvm.Authentication.Repository
 
 import com.exa.android.khacheri.utils.Response
 import com.google.android.gms.tasks.Tasks

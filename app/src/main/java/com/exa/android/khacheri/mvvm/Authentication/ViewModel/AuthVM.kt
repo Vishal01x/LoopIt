@@ -1,9 +1,9 @@
-package com.exa.android.khacheri.Authentication.ViewModel
+package com.exa.android.khacheri.mvvm.Authentication.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.exa.android.khacheri.Authentication.Repository.AuthRepository
-import com.exa.android.khacheri.Authentication.Repository.PasswordLessRepository
+import com.exa.android.khacheri.mvvm.Authentication.Repository.AuthRepository
+import com.exa.android.khacheri.mvvm.Authentication.Repository.PasswordLessRepository
 import com.exa.android.khacheri.utils.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
