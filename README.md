@@ -90,7 +90,7 @@ To run this project locally, follow the steps below:
 
 1. **Clone the repository**:
     ```bash
-    git clone [https://github.com/Vishal01x/loop it .git](https://github.com/Vishal01x/LoopIt)
+    git clone [https://github.com/Vishal01x/LoopIt]
     ```
 
 2. **Open the project** in Android Studio.
