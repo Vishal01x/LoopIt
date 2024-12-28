@@ -27,8 +27,9 @@ This is a feature-rich, user-centric messaging app that enables seamless communi
 - **User Profiles**: Users can set up and manage their profiles, including personal information, profile pictures, and status updates. Profile customization enhances the user experience and adds a personal touch to interactions.
 
 ## Some Reference of the app 
-![image](https://github.com/user-attachments/assets/fc2fcdc5-5975-4b73-93ab-1bc103b81305)
+![](https://github.com/user-attachments/assets/fc2fcdc5-5975-4b73-93ab-1bc103b81305)
 ![image](https://github.com/user-attachments/assets/5253ddb5-7a17-4d9d-8da1-e7e868f90524)
+![Profile and Status Screens](https://github.com/user-attachments/assets/8aa927e0-1673-4afa-9e2a-883fccf85536)
 
 ## Technical Overview
 
